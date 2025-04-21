@@ -1,24 +1,27 @@
-const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../db');
+This Sequelize model corresponds to the `submissions` table.
 
-class Submission extends Model {}
+const { DataTypes } = require('sequelize');
+const db = require('../db');
 
-Submission.init({
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  message: {
-    type: DataTypes.TEXT,
-    allowNull: false
-  }
+const Submission = db.define('Submission', {
+    name: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+    },
+    email: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+    },
+    message: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
 }, {
-  sequelize,
-  modelName: 'Submission'
+    tableName: 'submissions',
+    timestamps: true,
+    createdAt: 'created_at',
 });
 
 module.exports = Submission;
+
+###

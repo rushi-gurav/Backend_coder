@@ -196,7 +196,7 @@ async function handleCode(chatId, code) {
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-        model: "qwen/qwen2.5-vl-72b-instruct:free",
+        model: "qwen/qwen-2.5-coder-32b-instruct:free",
         messages: [{ role: "user", content: prompt }],
       },
       {
@@ -215,7 +215,17 @@ async function handleCode(chatId, code) {
 
     for (const match of matches) {
       const fileName = match[1].trim();
-      const content = match[2].replace(/```[a-z]*\n?|```/g, "").trim();
+      let content = match[2];
+
+      // Remove markdown code fences
+      content = content.replace(/```[a-z]*\n?|```/g, "");
+      
+      // Remove leading "This is code for..." type lines
+      content = content.replace(/^\s*(This\s+is\s+code\s+for.*?)\n/i, "");
+      
+      // Final trim
+      content = content.trim();
+      
 
       const filePath = path.join(outputDir, fileName);
       fs.mkdirSync(path.dirname(filePath), { recursive: true });
