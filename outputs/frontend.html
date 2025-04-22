@@ -1,0 +1,29 @@
+The frontend code you provided should be updated to point to the Express server. Here it is:
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Basic HTML Form</title>
+</head>
+<body>
+
+  <h2>Simple Form</h2>
+
+  <form action="/submit" method="post">
+    <label for="fname">First name:</label><br>
+    <input type="text" id="fname" name="fname"><br>
+    <label for="lname">Last name:</label><br>
+    <input type="text" id="lname" name="lname"><br><br>
+    <input type="submit" value="Submit">
+  </form>
+
+  <p>Note: The form itself is not visible.</p>
+  <p>Also note that the default width of text fields is 20 characters.</p>
+
+</body>
+</html>
+
+### Notes:
+- Ensure you have all the necessary dependencies installed, such as `express`, `mongoose`, and `body-parser`. You can install them using `npm install express mongoose body-parser`.
+- Replace `'your_mongodb_connection_string_here'` in `config.js` with your actual MongoDB connection string.
+- The frontend form submission is now pointing to the `/submit` endpoint of your Express server, which is expecting JSON data. If you want to submit form data directly from the form without conversion, you would need to use JavaScript to serialize the form data and send it as JSON, or use a library like Axios. Here, the form data needs to be converted to JSON by the client or a middleware before sending to the server.

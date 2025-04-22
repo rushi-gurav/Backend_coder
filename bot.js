@@ -212,36 +212,39 @@ async function handleCode(chatId, code) {
 
     const matches = aiResponse.matchAll(/---\s*(.*?)\s*---\s*([\s\S]*?)(?=---|$)/g);
     const savedFiles = [];
-
+    
     for (const match of matches) {
       const fileName = match[1].trim();
       let content = match[2];
-
-      // Remove markdown code fences
-      content = content.replace(/```[a-z]*\n?|```/g, "");
-      
-      // Remove leading "This is code for..." type lines
-      content = content.replace(/^\s*(This\s+is\s+code\s+for.*?)\n/i, "");
-      
+    
+      // Remove all markdown code fences like ```js or ```
+      content = content.replace(/```[a-z]*\n?|```/gi, "");
+    
+      // Remove lines like "This file contains..." or similar
+      content = content
+        .split('\n')
+        .filter(line => !/^(\s*this\s+file\s+contains|\s*this\s+is\s+code\s+for)/i.test(line.trim()))
+        .join('\n');
+    
       // Final trim
       content = content.trim();
-      
-
+    
       const filePath = path.join(outputDir, fileName);
       fs.mkdirSync(path.dirname(filePath), { recursive: true });
       fs.writeFileSync(filePath, content);
       savedFiles.push(filePath);
     }
-
+    
     if (savedFiles.length === 0) {
       return bot.sendMessage(chatId, "⚠️ No valid files were generated.");
     }
-
+    
     for (const file of savedFiles) {
       await bot.sendDocument(chatId, file);
     }
-
+    
     bot.sendMessage(chatId, "✅ Your backend project is ready!");
+    
 
     userHistory[chatId] = userHistory[chatId] || [];
     userHistory[chatId].push(`${backend} - ${new Date().toLocaleString()}`);
@@ -290,4 +293,19 @@ Output format:
     default:
       return "";
   }
+}
+
+// Dummy Express server to keep Render alive
+if (require.main === module) {
+  const express = require('express');
+  const app = express();
+  const PORT = process.env.PORT || 3000;
+
+  app.get('/', (req, res) => {
+    res.send('✅ Your Telegram Bot is alive on Render!');
+  });
+
+  app.listen(PORT, () => {
+    console.log(`🚀 Dummy server running on port ${PORT} to keep bot alive`);
+  });
 }
